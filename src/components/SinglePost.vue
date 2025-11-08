@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { usePaperlessStore } from "@/stores/paperless";
 
 const props = defineProps({
   post: {
@@ -14,6 +15,56 @@ const props = defineProps({
   },
 });
 
+const paperlessStore = usePaperlessStore();
+
+function normalizeDocumentTypeId(entry) {
+  if (typeof entry === "number" || typeof entry === "string") {
+    return String(entry);
+  }
+
+  if (entry && typeof entry === "object") {
+    if ("id" in entry && (typeof entry.id === "number" || typeof entry.id === "string")) {
+      return String(entry.id);
+    }
+    if ("pk" in entry && (typeof entry.pk === "number" || typeof entry.pk === "string")) {
+      return String(entry.pk);
+    }
+  }
+
+  return null;
+}
+
+const documentTypeName = computed(() => {
+  const directEntry = props.post?.document_type;
+
+  if (directEntry && typeof directEntry === "object") {
+    const raw =
+      typeof directEntry.name === "string"
+        ? directEntry.name
+        : typeof directEntry.title === "string"
+        ? directEntry.title
+        : typeof directEntry.label === "string"
+        ? directEntry.label
+        : null;
+    if (raw && raw.trim().length > 0) {
+      return raw.trim();
+    }
+  }
+
+  const fallbackId =
+    normalizeDocumentTypeId(directEntry) ??
+    normalizeDocumentTypeId(props.post?.document_type_id) ??
+    normalizeDocumentTypeId(props.post?.document_type_pk);
+
+  if (!fallbackId) {
+    return null;
+  }
+
+  const found = paperlessStore.documentTypes.find(
+    (type) => String(type?.id) === fallbackId
+  );
+  return found?.name ?? null;
+});
 
 const truncatedContent = computed(() => {
   const rawContent = props.post?.content ?? "";
@@ -27,6 +78,9 @@ const truncatedContent = computed(() => {
 <template>
   <div class="single-post" :id="post.id">
     <div class="single-post__content">
+      <p v-if="documentTypeName" class="single-post__document-type">
+        {{ documentTypeName }}
+      </p>
       <h1
         :class="[
           'single-post__title',
@@ -44,10 +98,18 @@ const truncatedContent = computed(() => {
 </template>
 
 <style scoped lang="scss">
-  
 .single-post {
   max-height: fit-content;
   margin-top: 20px;
+
+  &__document-type {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1f2933;
+  }
 
   &__title {
     font-size: 2rem;
@@ -117,8 +179,5 @@ const truncatedContent = computed(() => {
       color: #fff;
     }
   }
-  
 }
-
-
 </style>

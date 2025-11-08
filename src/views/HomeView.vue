@@ -15,8 +15,9 @@ const emptyState = computed(() => ({
   ctaLabel: "Importer un document",
 }));
 
-onMounted(() => {
-  paperlessStore.fetchDocuments();
+onMounted(async () => {
+  await paperlessStore.fetchDocuments();
+  await paperlessStore.fetchAllDocumentTypes();
 });
 </script>
 

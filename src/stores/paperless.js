@@ -8,6 +8,7 @@ export const usePaperlessStore = defineStore("paperless", () => {
   const documents = ref([]);
   const isLoading = ref(false);
   const tags = ref([]);
+  const documentTypes = ref([]);
   const error = ref(null);
 
   async function fetchDocuments(params = {}) {
@@ -117,6 +118,66 @@ export const usePaperlessStore = defineStore("paperless", () => {
     return normalizeTagTitle(payload);
   }
 
+  function extractDocumentTypePayload(payload, fallbackId) {
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+
+    const id =
+      typeof payload.id === "number" || typeof payload.id === "string"
+        ? payload.id
+        : fallbackId;
+    const rawName =
+      typeof payload.name === "string"
+        ? payload.name
+        : typeof payload.title === "string"
+        ? payload.title
+        : typeof payload.label === "string"
+        ? payload.label
+        : null;
+
+    if (!rawName || !rawName.trim()) {
+      return null;
+    }
+
+    return {
+      id,
+      name: rawName.trim(),
+    };
+  }
+
+  async function fetchDocumentTypeById(documentTypeId) {
+    const url = new URL(`${PAPERLESS_API_URL.replace(/\/$/, "")}/document_types/`);
+    url.searchParams.set("id", documentTypeId);
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Token ${PAPERLESS_TOKEN}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(
+        `Erreur Paperless (${response.status}) : ${message || response.statusText}`
+      );
+    }
+
+    const payload = await response.json();
+
+    if (Array.isArray(payload?.results) && payload.results.length > 0) {
+      return extractDocumentTypePayload(payload.results[0], documentTypeId);
+    }
+
+    if (Array.isArray(payload) && payload.length > 0) {
+      return extractDocumentTypePayload(payload[0], documentTypeId);
+    }
+
+    return extractDocumentTypePayload(payload, documentTypeId);
+  }
+
   async function fetchAllTags(params = {}) {
     try {
       error.value = null;
@@ -168,12 +229,84 @@ export const usePaperlessStore = defineStore("paperless", () => {
     }
   }
 
+  async function fetchAllDocumentTypes(params = {}) {
+    try {
+      error.value = null;
+      documentTypes.value = [];
+      const shouldRefreshDocuments =
+        Object.keys(params).length > 0 || documents.value.length === 0;
+
+      if (shouldRefreshDocuments) {
+        await fetchDocuments(params);
+      }
+
+      const typeIds = new Set();
+      documents.value.forEach((doc) => {
+        const entry = doc?.document_type ?? doc?.document_type_id ?? doc?.document_type_pk;
+
+        if (typeof entry === "number" || typeof entry === "string") {
+          typeIds.add(entry);
+        } else if (entry && typeof entry === "object") {
+          if ("id" in entry && (typeof entry.id === "number" || typeof entry.id === "string")) {
+            typeIds.add(entry.id);
+          } else if ("pk" in entry && (typeof entry.pk === "number" || typeof entry.pk === "string")) {
+            typeIds.add(entry.pk);
+          }
+        }
+      });
+
+      const fetched = await Promise.all(
+        Array.from(typeIds).map(async (typeId) => {
+          try {
+            return await fetchDocumentTypeById(typeId);
+          } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error(
+              `[Paperless] Échec de récupération du type de document ${typeId}`,
+              err
+            );
+            return null;
+          }
+        })
+      );
+
+      const registry = new Map();
+      fetched
+        .filter(
+          (item) =>
+            item &&
+            (typeof item.id === "number" || typeof item.id === "string") &&
+            typeof item.name === "string" &&
+            item.name.trim().length > 0
+        )
+        .forEach((item) => {
+          const idKey = String(item.id);
+          if (!registry.has(idKey)) {
+            registry.set(idKey, {
+              id: item.id,
+              name: item.name.trim(),
+            });
+          }
+        });
+
+      documentTypes.value = Array.from(registry.values()).sort((a, b) =>
+        a.name.localeCompare(b.name, "fr", { sensitivity: "base", numeric: true })
+      );
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err : new Error("Échec de la récupération des types de documents Paperless.");
+      documentTypes.value = [];
+    }
+  }
+
   return {
     documents,
     tags,
+    documentTypes,
     isLoading,
     error,
     fetchDocuments,
     fetchAllTags,
+    fetchAllDocumentTypes,
   };
 });
