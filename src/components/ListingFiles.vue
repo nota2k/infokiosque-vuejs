@@ -13,6 +13,7 @@ import { usePaperlessStore } from "@/stores/paperless";
 const paperlessStore = usePaperlessStore();
 
 const posts = computed(() => paperlessStore.documents);
+const bigTitleIndex = ref(null);
 
 const masonryRef = ref(null);
 let rafId = null;
@@ -59,6 +60,12 @@ onMounted(() => {
       masonryRef.value.style.setProperty("--masonry-row-height", `${ROW_HEIGHT}px`);
       masonryRef.value.style.setProperty("--masonry-gap", `${GAP}px`);
     }
+    if (posts.value.length > 1) {
+      const randomIndex =
+        Math.floor(Math.random() * (posts.value.length - 1)) + 1;
+      bigTitleIndex.value = randomIndex;
+    }
+
     scheduleMasonryLayout();
   });
 
@@ -76,6 +83,14 @@ watch(
   posts,
   () => {
     nextTick(() => {
+      if (posts.value.length > 1) {
+        const randomIndex =
+          Math.floor(Math.random() * (posts.value.length - 1)) + 1;
+        bigTitleIndex.value = randomIndex;
+      } else {
+        bigTitleIndex.value = null;
+      }
+
       scheduleMasonryLayout();
     });
   },
@@ -86,11 +101,11 @@ watch(
 <template>
   <div class="listing-files" ref="masonryRef">
     <div
-      v-for="post in posts"
+      v-for="(post, index) in posts"
       :key="post.id"
       class="listing-files__item"
     >
-      <SinglePost :post="post" />
+      <SinglePost :post="post" :is-big-title="index === bigTitleIndex" />
     </div>
   </div>
 </template>

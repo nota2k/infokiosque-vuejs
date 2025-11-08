@@ -8,6 +8,10 @@ const props = defineProps({
     title: String,
     content: String,
   },
+  isBigTitle: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 
@@ -23,7 +27,12 @@ const truncatedContent = computed(() => {
 <template>
   <div class="single-post" :id="post.id">
     <div class="single-post__content">
-      <h1 class="single-post__title">
+      <h1
+        :class="[
+          'single-post__title',
+          { 'single-post__title--big': props.isBigTitle },
+        ]"
+      >
         {{ post.title }}
       </h1>
       <div class="single-post__body">
@@ -38,15 +47,51 @@ const truncatedContent = computed(() => {
   
 .single-post {
   max-height: fit-content;
+  margin-top: 20px;
+
   &__title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 600;
     margin-bottom: 1rem;
     font-family: "Velvelyne", sans-serif;
     line-height: 1.2;
+    position: relative;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+
+    inset: 0;
+    border-bottom: 3px solid transparent;
+    border-image-source: url("/line.svg");
+    border-image-slice: 30 fill;
+    border-image-repeat: repeat;
+    z-index: -1;
+    pointer-events: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      bottom: -15px;
+      margin-bottom: 5px;
+      border-bottom: 3px solid transparent;
+      border-image-source: url("/line.svg");
+      border-image-slice: 30 fill;
+      border-image-repeat: repeat;
+      pointer-events: none;
+    }
+  }
+
+  &__title--big {
+    font-size: 4vw;
+    line-height: 1.1;
+    text-transform: uppercase;
+    font-family: "Aujournuit", sans-serif;
+    word-wrap: break-word;
   }
 
   &__body {
+    margin-top: 30px;
     font-size: 1rem;
     font-family: "Aujournuit", serif;
     line-height: 1.5;
