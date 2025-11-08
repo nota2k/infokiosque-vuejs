@@ -1,11 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import logo from "@/assets/img/logo.svg";
 </script>
 
 <template>
   <div class="layout">
     <header class="topbar">
-      <RouterLink to="/" class="logo">Infokiosque</RouterLink>
+      <RouterLink to="/" class="logo"><img class="logo__img" :src="logo" alt="Infokiosque" /></RouterLink>
       <nav class="nav">
         <RouterLink to="/" class="nav__link">Accueil</RouterLink>
       </nav>
@@ -17,7 +18,7 @@ import { RouterLink, RouterView } from "vue-router";
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .layout {
   min-height: 100vh;
   display: flex;
@@ -45,6 +46,12 @@ import { RouterLink, RouterView } from "vue-router";
   color: #1d4ed8;
   text-decoration: none;
   letter-spacing: 0.04em;
+
+  .logo__img {
+    width: 100%;
+    max-width: 100px;
+    object-fit: contain;
+  }
 }
 
 .nav {
