@@ -29,7 +29,7 @@ const truncatedContent = computed(() => {
       <div class="single-post__body">
         {{ truncatedContent }}
       </div>
-      <a :href="`https://papiers.pantagruweb.club/api/documents/${post.id}/preview/`" class="single-post__link" target="_blank">Voir plus</a>
+      <a class="read-more" :href="`https://papiers.pantagruweb.club/api/documents/${post.id}/preview/`" target="_blank">Lire</a>
     </div>
   </div>
 </template>
@@ -58,7 +58,18 @@ const truncatedContent = computed(() => {
       line-height: 1.5;
       font-weight: 400;
     }
+
+    .read-more {
+      display: inline-block;
+      margin-top: 1.25rem;
+      font-weight: 600;
+      border: 1px solid #000;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+    }
+    
   }
 }
+
 
 </style>

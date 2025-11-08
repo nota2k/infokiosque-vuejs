@@ -3,6 +3,7 @@ import { computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 
 import ListingFiles from "@/components/ListingFiles.vue";
+import Filter from "@/components/Filter.vue";
 import { usePaperlessStore } from "@/stores/paperless.js";
 
 const paperlessStore = usePaperlessStore();
@@ -23,6 +24,7 @@ onMounted(() => {
   <main class="home">
     <h1 class="home__title">Infokiosque</h1>
     <div class="container">
+      <Filter />
       <ListingFiles :files="documents" :empty-state="emptyState" />
       <p v-if="isLoading" class="status status--loading">Chargement des documents…</p>
       <p v-else-if="error" class="status status--error">
