@@ -35,40 +35,44 @@ const truncatedContent = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.listing-files {
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  min-height: 100vh;
   
-  .single-post {
-    border: 1px solid #000;
-    padding: 1rem;
-
-    &__title {
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      font-family: "Velvelyne", sans-serif;
-      line-height: 1.2;
-    }
-
-    &__body {
-      font-size: 1rem;
-      font-family: "Aujournuit", serif;
-      line-height: 1.5;
-      font-weight: 400;
-    }
-
-    .read-more {
-      display: inline-block;
-      margin-top: 1.25rem;
-      font-weight: 600;
-      border: 1px solid #000;
-      padding: 0.5rem 1rem;
-      text-decoration: none;
-    }
-    
+.single-post {
+  max-height: fit-content;
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-family: "Velvelyne", sans-serif;
+    line-height: 1.2;
   }
+
+  &__body {
+    font-size: 1rem;
+    font-family: "Aujournuit", serif;
+    line-height: 1.5;
+    font-weight: 400;
+    overflow: hidden;
+  }
+
+  .read-more {
+    margin-top: 1.25rem;
+    display: block;
+    width: 100%;
+    font-weight: 600;
+    border: 1px solid #000;
+    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    color: #000;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: #000;
+      color: #fff;
+    }
+  }
+  
 }
 
 

@@ -45,11 +45,10 @@ onMounted(async () => {
   padding: 0;
   list-style: none;
 
-  &__tag {
+  .filter__tag {
     padding: 0.35rem 0.75rem;
     border-radius: 999px;
-    background: rgba(37, 99, 235, 0.12);
-    color: $color-primary;
+    border: 1px solid #000;
     font-weight: 500;
     font-size: 0.9rem;
   }

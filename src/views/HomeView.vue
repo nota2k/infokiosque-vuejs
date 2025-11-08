@@ -38,8 +38,7 @@ onMounted(() => {
 .home {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
-  padding: 4rem 1.5rem 6rem;
+  padding: 0 1.5rem 6rem;
   color: #1f2933;
 
   .home__title {
@@ -47,6 +46,21 @@ onMounted(() => {
     font-weight: 500;
     text-align: center;
     font-family: "Bagnard", sans-serif;
+    padding: 1.8rem 0 1.2rem 0;
+    position: relative;
+    z-index: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 5px solid transparent;
+      border-image-source: url("/line.svg");
+      border-image-slice: 30 fill;
+      border-image-repeat: repeat;
+      z-index: -1;
+      pointer-events: none;
+    }
   }
 }
 

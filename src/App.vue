@@ -7,9 +7,6 @@ import logo from "@/assets/img/logo.svg";
   <div class="layout">
     <header class="topbar">
       <RouterLink to="/" class="logo"><img class="logo__img" :src="logo" alt="Infokiosque" /></RouterLink>
-      <nav class="nav">
-        <RouterLink to="/" class="nav__link">Accueil</RouterLink>
-      </nav>
     </header>
     <RouterView />
     <footer class="footer">
@@ -23,33 +20,37 @@ import logo from "@/assets/img/logo.svg";
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f8fafc;
+  position: relative;
+  top: -100px;
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem clamp(1.5rem, 5vw, 3rem);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  padding: 0 clamp(1.5rem, 5vw, 3rem);
   position: sticky;
-  top: 0;
+  top: 10px;
   z-index: 10;
-  backdrop-filter: blur(12px);
 }
 
 .logo {
   font-weight: 700;
-  font-size: 1.2rem;
-  color: #1d4ed8;
   text-decoration: none;
-  letter-spacing: 0.04em;
+  border-radius: 999px;
+  border: 1px solid #000;
+  padding: 1.3em;
+  aspect-ratio: 1/1;
+  max-width: 80px;
+  height: 80px;
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .logo__img {
     width: 100%;
-    max-width: 100px;
     object-fit: contain;
   }
 }
