@@ -16,6 +16,7 @@ import logo from "@/assets/img/logo.svg";
 </template>
 
 <style scoped lang="scss">
+
 .layout {
   min-height: 100vh;
   display: flex;
