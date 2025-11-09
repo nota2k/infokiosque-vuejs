@@ -116,7 +116,6 @@ const truncatedContent = computed(() => {
     padding: 0.35rem 0.75rem;
     display: inline-block;
     letter-spacing: 0.06em;
-    color: #1f2933;
   }
 
   &__title {
@@ -129,7 +128,7 @@ const truncatedContent = computed(() => {
     padding-bottom: 20px;
     margin-bottom: 20px;
     margin-top: 20px;
-
+    color:$color-primary;
     inset: 0;
     border-bottom: 3px solid transparent;
     border-image-source: url("/line.svg");
@@ -156,6 +155,7 @@ const truncatedContent = computed(() => {
     font-size: 4vw;
     line-height: 1.1;
     text-transform: uppercase;
+    color:$color-primary;
     font-family: "Aujournuit", sans-serif;
     word-wrap: break-word;
   }
@@ -167,6 +167,7 @@ const truncatedContent = computed(() => {
     line-height: 1.5;
     font-weight: 400;
     overflow: hidden;
+    color:$color-primary;
 
     &--double-width {
       p {
@@ -186,17 +187,19 @@ const truncatedContent = computed(() => {
     margin-top: 1.25rem;
     display: block;
     width: 100%;
+    max-width: 200px;
+    // border-radius:0px 0px 40px 40px;
     font-weight: 600;
     border: 1px solid #000;
     padding: 0.5rem 1rem;
     box-sizing: border-box;
     text-align: center;
     text-decoration: none;
-    color: #000;
+    color: $color-primary;
     transition: background 0.2s ease, color 0.2s ease;
 
     &:hover {
-      background: #000;
+      background: $color-primary;
       color: #fff;
     }
   }

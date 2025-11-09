@@ -113,6 +113,11 @@ onMounted(async () => {
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
 
+    &:hover {
+      background-color: $color-primary;
+      color: #fff;
+    }
+
     &--active {
       background-color: #000;
       color: #fff;

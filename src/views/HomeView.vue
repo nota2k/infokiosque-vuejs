@@ -54,6 +54,7 @@ onMounted(async () => {
     padding: 1.8rem 0 1.2rem 0;
     position: relative;
     z-index: 0;
+    color: $color-primary;
 
     &::before {
       content: "";
