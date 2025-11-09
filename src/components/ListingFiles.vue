@@ -177,6 +177,5 @@ watch(
 .listing-files__item {
   grid-row-end: span var(--masonry-span, 1);
 }
-
 </style>
 

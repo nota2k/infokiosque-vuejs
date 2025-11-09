@@ -73,12 +73,13 @@ const truncatedContent = computed(() => {
   }
   return `${rawContent.slice(0, 600)}…`;
 });
+
 </script>
 
 <template>
   <div class="single-post" :id="post.id">
     <div class="single-post__content">
-      <p v-if="documentTypeName" class="single-post__document-type">
+      <p class="single-post__document-type" :class="{ 'single-post__document-type--big': props.isBigTitle }" v-if="documentTypeName">
         {{ documentTypeName }}
       </p>
       <h1
@@ -107,6 +108,9 @@ const truncatedContent = computed(() => {
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
+    border: 1px solid #000;
+    padding: 0.35rem 0.75rem;
+    display: inline-block;
     letter-spacing: 0.06em;
     color: #1f2933;
   }

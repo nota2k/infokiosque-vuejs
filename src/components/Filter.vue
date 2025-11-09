@@ -4,11 +4,11 @@ import { usePaperlessStore } from "@/stores/paperless";
 
 const paperlessStore = usePaperlessStore();
 
-const tags = computed(() => paperlessStore.tags);
+const documentTypes = computed(() => paperlessStore.documentTypes);
 
 onMounted(async () => {
-  if (!paperlessStore.tags.length) {
-    await paperlessStore.fetchAllTags();
+  if (!paperlessStore.documentTypes.length) {
+    await paperlessStore.fetchAllDocumentTypes();
   }
 });
 </script>
@@ -16,8 +16,8 @@ onMounted(async () => {
 <template>
   <div class="filter">
     <ul class="filter__tags">
-      <li v-for="tag in tags" :key="tag" class="filter__tag">
-        {{ tag }}
+      <li v-for="documentType in documentTypes" :key="documentType.id" class="filter__tag">
+        {{ documentType.name }}
       </li>
     </ul>
   </div>
@@ -47,7 +47,6 @@ onMounted(async () => {
 
   .filter__tag {
     padding: 0.35rem 0.75rem;
-    border-radius: 999px;
     border: 1px solid #000;
     font-weight: 500;
     font-size: 0.9rem;
