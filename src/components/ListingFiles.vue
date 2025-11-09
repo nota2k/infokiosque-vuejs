@@ -342,9 +342,9 @@ watch(
   gap: var(--masonry-gap);
   overflow-y: auto;
   max-height: 100vh;
-  scroll-snap-type: y mandatory;
+  // scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-
+  // scroll-padding-top: 200px; // Espace supplémentaire en bas pour accéder au bouton
 
   // Masquer la scrollbar mais garder le scroll
   &::-webkit-scrollbar {
@@ -355,9 +355,15 @@ watch(
 }
 
 .listing-files__item {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  // scroll-snap-align: start;
+  // scroll-snap-stop: always;
   flex-shrink: 0;
+}
+
+.listing-files__column {
+  .listing-files__item:last-child {
+    padding-bottom: 300px;
+  }
 }
 </style>
 
