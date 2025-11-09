@@ -23,6 +23,7 @@ import logo from "@/assets/img/logo.svg";
   flex-direction: column;
   position: relative;
   top: -100px;
+  
 }
 
 .topbar {
