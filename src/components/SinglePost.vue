@@ -78,12 +78,34 @@ const truncatedContent = computed(() => {
   return `${rawContent.slice(0, 600)}…`;
 });
 
+function normalizeClassName(name) {
+  if (!name || typeof name !== "string") return null;
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-") // Remplacer les caractères non alphanumériques par des tirets
+    .replace(/^-+|-+$/g, ""); // Supprimer les tirets en début et fin
+}
+
+const documentTypeClass = computed(() => {
+  const name = documentTypeName.value;
+  if (!name) return null;
+  return normalizeClassName(name);
+});
+
 </script>
 
 <template>
-  <div class="single-post" :id="post.id">
+  <div class="single-post" :class="{ [`single-post--${documentTypeClass}`]: documentTypeClass }" :id="post.id">
     <div class="single-post__content">
-      <p class="single-post__document-type" :class="{ 'single-post__document-type--big': props.isBigTitle }" v-if="documentTypeName">
+      <p 
+        :class="[
+          'single-post__document-type',
+          documentTypeClass && `single-post__document-type--${documentTypeClass}`,
+          { 'single-post__document-type--big': props.isBigTitle }
+        ]" 
+        v-if="documentTypeName"
+      >
         {{ documentTypeName }}
       </p>
       <h1
@@ -202,6 +224,83 @@ const truncatedContent = computed(() => {
       background: $color-primary;
       color: #fff;
     }
+  }
+}
+
+.single-post--livre {
+  &::before {
+    content: "";
+    display: block;
+    width:80px;
+    height: 80px;
+    float: left;
+    background-image: url("book.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 1rem;
+  }
+}
+
+.single-post--brochure {
+  &::before {
+    content: "";
+    display: block;
+    width:80px;
+    height: 80px;
+    float: left;
+    background-image: url("app-photo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 1rem;
+  }
+}
+
+.single-post--article {
+  &::before {
+    content: "";
+    display: block;
+    width:80px;
+    height: 80px;
+    float: left;
+    background-image: url("machine.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 1rem;
+  }
+}
+
+.single-post--pamphlet {
+  
+  .single-post__body {
+    &::before {
+      content: "";
+      display: block;
+      width:80px;
+      height: 80px;
+      float: left;
+      background-image: url("Plume.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+  
+}
+
+.single-post--questionnaire {
+  border: 2px solid $color-primary;
+  padding: 2rem;
+  text-align: center;
+
+  .single-post__body {
+    text-align: left;
+  }
+
+  .read-more {
+    margin: 0 auto;
   }
 }
 </style>
