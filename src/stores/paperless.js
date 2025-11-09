@@ -203,9 +203,76 @@ export const usePaperlessStore = defineStore("paperless", () => {
     }
   }
 
+  async function fetchDocumentsByDocumentType(documentTypeId) {
+    if (!documentTypeId && documentTypeId !== 0) {
+      await fetchDocuments();
+      return;
+    }
+
+    if (!PAPERLESS_API_URL || !PAPERLESS_TOKEN) {
+      error.value = new Error(
+        "Configuration Paperless manquante. Vérifiez vos variables d'environnement."
+      );
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const baseUrl = new URL(`${PAPERLESS_API_URL.replace(/\/$/, "")}/documents/`);
+      baseUrl.searchParams.set("document_type__id", documentTypeId);
+
+      const collected = [];
+      let nextUrl = baseUrl.toString();
+
+      while (nextUrl) {
+        const response = await fetch(nextUrl, {
+          headers: {
+            Authorization: `Token ${PAPERLESS_TOKEN}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(
+            `Erreur Paperless (${response.status}) : ${message || response.statusText}`
+          );
+        }
+
+        const payload = await response.json();
+
+        if (Array.isArray(payload?.results)) {
+          collected.push(...payload.results);
+          nextUrl = payload.next
+            ? new URL(payload.next, baseUrl).toString().replace(/^http:/, "https:")
+            : null;
+        } else if (Array.isArray(payload)) {
+          collected.push(...payload);
+          nextUrl = null;
+        } else {
+          nextUrl = null;
+        }
+      }
+
+      documents.value = collected;
+    } catch (err) {
+      error.value =
+        err instanceof Error
+          ? err
+          : new Error("Échec de la récupération des documents Paperless.");
+      documents.value = [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   return {
     documents,
     documentTypes,
+    fetchDocumentsByDocumentType,
     isLoading,
     error,
     fetchDocuments,
