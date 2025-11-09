@@ -16,6 +16,7 @@ const paperlessStore = usePaperlessStore();
 const posts = computed(() => paperlessStore.documents);
 const bigTitleIndex = ref(null);
 const placardIndex = ref(null);
+const doubleWidthItems = ref(new Set());
 const renderItems = computed(() => {
   const items = posts.value.map((post, index) => ({
     type: "post",
@@ -47,6 +48,27 @@ function applyMasonryLayout() {
   const container = masonryRef.value;
   if (!container) return;
 
+  const gridStyles = window.getComputedStyle(container);
+  const columnTemplate = gridStyles.gridTemplateColumns;
+  const columnCount = columnTemplate.split(" ").length;
+  const containerWidth = container.offsetWidth;
+  const gap = parseFloat(gridStyles.gap) || 24;
+
+  // Calculer la largeur de la première colonne selon le nombre de colonnes
+  let firstColumnWidth;
+  if (columnCount === 3) {
+    // 2fr + 1fr + 1fr = 4fr total, première colonne = 2fr = 50%
+    // Largeur de la première colonne SANS le gap après
+    firstColumnWidth = (containerWidth - gap * 2) * (2 / 4);
+  } else if (columnCount === 2) {
+    // 2fr + 1fr = 3fr total, première colonne = 2fr = 66.67%
+    // Largeur de la première colonne SANS le gap après
+    firstColumnWidth = (containerWidth - gap) * (2 / 3);
+  } else {
+    // Une seule colonne ou colonnes égales - pas de colonne double
+    firstColumnWidth = 0;
+  }
+
   container.querySelectorAll(".listing-files__item").forEach((item) => {
     const content =
       item.querySelector(".single-post") ?? item.querySelector(".placard");
@@ -59,6 +81,42 @@ function applyMasonryLayout() {
     );
 
     item.style.setProperty("--masonry-span", span);
+
+    // Détecter si l'élément est dans la première colonne (largeur double)
+    if (columnCount > 1 && firstColumnWidth > 0) {
+      const rect = item.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const itemLeft = rect.left - containerRect.left;
+      const itemCenter = itemLeft + rect.width / 2;
+
+      // Si le centre de l'élément est dans la première colonne (largeur double)
+      const isDoubleWidth = itemCenter <= firstColumnWidth;
+      
+      if (isDoubleWidth) {
+        item.classList.add("listing-files__item--double-width");
+        // Stocker l'ID du post pour passer la prop
+        const postElement = item.querySelector(".single-post");
+        if (postElement) {
+          const postId = postElement.id;
+          if (postId) {
+            doubleWidthItems.value.add(postId);
+          }
+        }
+      } else {
+        item.classList.remove("listing-files__item--double-width");
+        const postElement = item.querySelector(".single-post");
+        if (postElement) {
+          const postId = postElement.id;
+          if (postId) {
+            doubleWidthItems.value.delete(postId);
+          }
+        }
+      }
+    } else {
+      item.classList.remove("listing-files__item--double-width");
+      // Nettoyer tous les IDs si pas de colonne double
+      doubleWidthItems.value.clear();
+    }
   });
 }
 
@@ -144,6 +202,7 @@ watch(
         v-if="item.type === 'post'"
         :post="item.post"
         :is-big-title="item.index === bigTitleIndex"
+        :is-double-width="doubleWidthItems.has(String(item.post.id))"
       />
       <Placard v-else />
     </div>

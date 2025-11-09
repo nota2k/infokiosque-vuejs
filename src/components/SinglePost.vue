@@ -13,6 +13,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isDoubleWidth: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const paperlessStore = usePaperlessStore();
@@ -90,8 +94,8 @@ const truncatedContent = computed(() => {
       >
         {{ post.title }}
       </h1>
-      <div class="single-post__body">
-        {{ truncatedContent }}
+      <div class="single-post__body" :class="{ 'single-post__body--double-width': props.isDoubleWidth }">
+        <p>{{ truncatedContent }}</p>
       </div>
       <a class="read-more" :href="`https://papiers.pantagruweb.club/api/documents/${post.id}/preview/`" target="_blank">Lire</a>
     </div>
@@ -163,6 +167,19 @@ const truncatedContent = computed(() => {
     line-height: 1.5;
     font-weight: 400;
     overflow: hidden;
+
+    &--double-width {
+      p {
+        columns: 2;
+        column-gap: 1rem;
+      }
+
+      @media (max-width: 900px) {
+        p {
+          columns: 1;
+        }
+      }
+    }
   }
 
   .read-more {
